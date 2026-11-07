@@ -35,8 +35,9 @@ This module outlines the 4-phase protocol for generating the master conditioning
 2. **Configuration**:
    * Aspect Ratio: 1:1 or native 16:9 matching production delivery.
    * Style Anchors: Photorealistic, cinematic 35mm, or stylized 3D—maintain consistent aesthetic vocabulary across all subsequent prompts.
-3. **Prompt Architecture**:
+3. **Prompt Architecture & Neutral Baseline**:
    * Define foundational geometry: bone structure, eye shape, facial hair, distinct markings, skin tone.
+   * **Neutral Expression Invariant**: The character MUST maintain a relaxed, neutral facial expression with closed mouth and resting eyes. Never generate a smiling, scowling, or expressive base reference—emotional expressions baked into the 3D skull volume will corrupt lip-sync and fight dramatic scene tone downstream.
    * *Anti-Slop Rule*: Avoid non-descriptive buzzwords like "hyperrealistic 8k masterpiece". Specify concrete physical parameters (e.g., "asymmetrical scar over left eyebrow, small geometric bird tattoo under right cheekbone, olive skin tone, defined cheekbones").
 
 ---
@@ -79,12 +80,9 @@ Video models hallucinate when a character turns because front-facing sheets leav
 This is the central master reference asset that supplies rotational 3D volume to the video engine.
 
 1. **Engine Selection**: Deploy an engine accepting video-to-video or image-to-video conditioning (e.g., Cance 2.5 or Kling 4).
-2. **Input Conditioning & Dual-Panel Isolation**:
-   * **Crucial Edge-Case Rule**: Never feed the raw uncropped Phase 2 split-frame directly into a naive video generator without isolation, or the model may attempt to animate two side-by-side subjects.
-   * *Protocol*: Either **crop the left full-body panel** as a standalone single-subject image for the video generator, or include explicit panel-isolation instructions:
-     ```text
-     Animate strictly the single character from the full-body panel into a clean central studio turntable. Do not generate a split screen.
-     ```
+2. **Input Conditioning & Canvas Centering**:
+   * **Crucial Isolation Rule**: Never feed the raw uncropped Phase 2 split-frame directly into a video generator without isolation, or the model may attempt to animate two side-by-side subjects.
+   * **Canvas Aspect-Ratio Parity**: Crop the left full-body vertical panel and place the subject centered onto a neutral dark-grey 16:9 canvas (if 16:9 is your production target). Feeding an unpadded vertical (9:16) crop into a landscape video generator forces auto-scaling, focal zooming, or horizon distortion.
    * Pair with `@turnaround_sheet` for posterior coordinate grounding.
 3. **Aspect-Ratio Parity**:
    * Ensure the turntable video resolution and aspect ratio (e.g., 16:9 landscape 1080p) exactly matches the intended production scene aspect ratio.

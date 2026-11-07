@@ -74,7 +74,9 @@ Placing two distinct AI characters in the same shot frequently causes "character
 1. **Dual Video Conditioning**: Upload `@charA_video` (Character 1 turntable) and `@charB_video` (Character 2 turntable).
 2. **Spatial Partitioning Rule**: Always anchor characters to opposite halves of the frame using unambiguous positional language (Screen-Left vs Screen-Right).
 3. **Explicit Actor-Action Binding**: Tie each wardrobe and behavioral attribute directly to the specific tag reference.
-4. **Single-Video Interface Fallback**: If the platform only accepts one video conditioning file, upload `@charA_video` and inject Character B via a static 2D turnaround sheet (`@charB_sheet`), positioning Character A in dynamic foreground action and Character B in static profile.
+4. **Single-Video Interface Workarounds**: If the platform only accepts a single conditioning video file:
+   * *Method A (Video Stitching)*: Horizontally stitch `@charA_video` and `@charB_video` side-by-side into a single 16:9 split conditioning MP4 (`@dual_turntable_video`), and instruct the prompt to condition Screen-Left on the left half and Screen-Right on the right half.
+   * *Method B (Hybrid Video + Sheet)*: Upload `@charA_video` and inject Character B via a static 2D turnaround sheet (`@charB_sheet`), positioning Character A in dynamic foreground action and Character B in static profile.
 5. **Prompt Template**:
    ```text
    Cinematic wide tracking shot featuring two characters walking forward in unison.
